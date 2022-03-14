@@ -1,4 +1,4 @@
-package thread;
+package com.mike.thread;
 
 public class ThreadSafe extends Thread {
   public volatile boolean exit = false;

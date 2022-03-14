@@ -1,4 +1,4 @@
-package thread;
+package com.mike.thread;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;

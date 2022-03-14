@@ -1,4 +1,4 @@
-package thread;
+package com.mike.thread;
 
 public  class BThread extends Thread {
   public BThread() {
