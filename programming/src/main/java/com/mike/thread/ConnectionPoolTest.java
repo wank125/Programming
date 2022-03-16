@@ -1,9 +1,12 @@
 package com.mike.thread;
 
+import com.sun.tools.javac.util.StringUtils;
+
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 public class ConnectionPoolTest {
   static ConnectionPool pool = new ConnectionPool(10);
@@ -41,6 +44,14 @@ public class ConnectionPoolTest {
 
     @Override
     public void run() {
+
+//      Boolean match = false;
+//      if (str != null && (str.length() != 0)) {
+//        match = Pattern.matches(pattern, str);
+//      }
+//
+
+
       try {
         start.await();
       } catch (InterruptedException e) {
