@@ -24,6 +24,7 @@ public class DeEnCoderCipherUtil {
     return new BASE64Encoder().encode(byteContent);
   }
 
+
   public static String decrypt(String ciphertext, String key) throws Exception {
     if (Strings.isNullOrEmpty(ciphertext) || Strings.isNullOrEmpty(key)) {
       return null;
