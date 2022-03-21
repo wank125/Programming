@@ -1,6 +1,9 @@
 package com.mike.base;
 
 public class StackGeneric<T> {
+  /**
+   * 范型
+   */
 
   private class Node {
     private T value;

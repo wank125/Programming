@@ -35,6 +35,5 @@ class MapTest {
     });
 
     System.out.println(ml);
-
   }
 }
