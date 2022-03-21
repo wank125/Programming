@@ -18,7 +18,7 @@ public class SuperMath {
       }
     }
 
-    return
+    return max;
 
   }
 }
