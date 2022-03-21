@@ -2,6 +2,7 @@ package com.mike.base;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 
 interface Functor<T> {
@@ -33,6 +34,14 @@ public class CallbackTest {
     list.add("C");
     Functor<Object> fun = new MyCallBack();
     callback(list, fun);
+  }
+
+  public static <T extends Comparator<T>> T min(T[] array) {
+    T val = array[0];
+    for (int i = 0; i < array.length; i++) {
+      val = array[i];
+    }
+    return val;
   }
 
 
