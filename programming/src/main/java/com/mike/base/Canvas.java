@@ -23,7 +23,9 @@ class Rectangle extends Shap {
   }
 }
 
-
+/**
+ * 通配符子类限制
+ */
 public class Canvas {
 
   public void drawAll(ArrayList<? extends Shap> shapes) {

@@ -1,6 +1,8 @@
 package com.mike.base;
 
+
 import java.util.ArrayList;
+
 
 interface Functor<T> {
   void call(T args);
@@ -13,6 +15,9 @@ class MyCallBack implements Functor<Object> {
   }
 }
 
+/**
+ * 通配符超类限定
+ */
 public class CallbackTest {
   public static <T> T callback(ArrayList<T> list, Functor<? super T> functor) {
     for (T each : list) {
