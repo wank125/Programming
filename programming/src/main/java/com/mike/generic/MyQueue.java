@@ -2,9 +2,15 @@ package com.mike.generic;
 
 interface Iterators<T> {
     boolean hasNext();
+
     T next();
 }
 
+/**
+ * 队列
+ *
+ * @param <T> 参数类型
+ */
 public class MyQueue<T> {
 
     private final int max;
@@ -40,7 +46,7 @@ public class MyQueue<T> {
         if (isEmpty()) {
             new RuntimeException("");
         }
-        return (T) arr[front++];
+        return (T) arr[front + 1];
     }
 
     public Iterator<T> iterator() {
@@ -57,5 +63,15 @@ public class MyQueue<T> {
                 return (T) arr[ipos++];
             }
         };
+    }
+
+
+    public static void main(String[] args) {
+        MyQueue<String> stringMyQueue = new MyQueue<String>(10);
+        stringMyQueue.offer("A");
+        stringMyQueue.offer("B");
+        System.out.printf(stringMyQueue.poll());
+        System.out.printf(stringMyQueue.poll());
+        System.out.printf(stringMyQueue.poll());
     }
 }
