@@ -1,4 +1,4 @@
-package com.mike.base;
+package com.mike.generic;
 
 
 import java.util.ArrayList;

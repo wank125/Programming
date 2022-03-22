@@ -1,4 +1,4 @@
-package com.mike.base;
+package com.mike.generic;
 
 public class SuperMath {
 

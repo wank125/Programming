@@ -1,42 +1,31 @@
-package com.mike.base;
+package com.mike.generic;
 
-public class StackGeneric<T> {
-  /**
-   * 范型
-   */
-
+public class StackObject {
   private class Node {
-    private T value;
+    private Object value;
     private Node next;
-    //private HashMap<K, V> fist;
-
-    public Node(T value, Node next) {
-      this.value = value;
-      this.next = next;
-      // this.fist = new HashMap<K, V>();
-    }
 
     public Node() {
       this(null, null);
     }
 
+    public Node(Object value, Node next) {
+      this.value = value;
+      this.next = next;
+    }
+
     public boolean end() {
       return next == null;
     }
-//
-//    public void setFirst(K key, V value) {
-//      this.fist.put(key, value);
-//    }
   }
 
   private Node root = new Node();
 
-
-  public void push(T value) {
+  public void push(Object value) {
     this.root = new Node(value, this.root);
   }
 
-  public T pop() {
+  public Object pop() {
     Node val = this.root;
     if (!val.end()) {
       this.root = val.next;
@@ -45,15 +34,24 @@ public class StackGeneric<T> {
     return null;
   }
 
-
+  public boolean empty() {
+    return root.end();
+  }
 }
 
-class StackTest1 {
+class StackTest {
   public static void main(String[] args) {
-    StackGeneric<String> stack = new StackGeneric<>();
+    StackObject stack = new StackObject();
     stack.push("one");
     stack.push("two");
+    stack.push("three");
 
+    System.out.println(stack.pop());
+    System.out.println(stack.pop());
+    System.out.println(stack.pop());
+
+    stack.push("one");
+    stack.push(11);
     System.out.println(stack.pop());
     System.out.println(stack.pop());
 

@@ -1,4 +1,4 @@
-package com.mike.base;
+package com.mike.enumes;
 
 enum Week {
   Sunday(70), Monday(10), Tuesday(20), Wednesday(30), Thursday(40), Friday(50), Saturday(60);

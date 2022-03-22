@@ -1,4 +1,4 @@
-package com.mike.base;
+package com.mike.enumes;
 
 public class TestWeek {
   static void UseWeek(Week day) {
