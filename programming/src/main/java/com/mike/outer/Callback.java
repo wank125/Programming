@@ -1,5 +1,8 @@
 package com.mike.outer;
 
+/**
+ * 回调
+ */
 interface Operation {
     void operate();
 }

@@ -1,6 +1,8 @@
 package com.mike.outer;
 
-
+/**
+ * 回调
+ */
 interface ClickHandler {
     void onClick();
 }
