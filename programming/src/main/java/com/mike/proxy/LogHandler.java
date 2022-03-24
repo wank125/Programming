@@ -20,7 +20,7 @@ public class LogHandler implements InvocationHandler {
 
         Object result = null;
         logger.log(Level.INFO, "method starts.. " + method);
-        Object invoke = method.invoke(originalObj, args);
+        result = method.invoke(originalObj, args);
         logger.log(Level.INFO, "methos ends..." + method);
         return result;
     }
