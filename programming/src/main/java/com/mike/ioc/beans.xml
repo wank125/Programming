@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+    <bean id="intelCPU" class="com.mike.computer.IntelCPU"/>
+    <bean id="nvCard" class="com.mike.computer.NVIDIACard"/>
+
+    <bean id="mainboard" class="com.mike.computer.Mainboard">
+        <property name="cpu">
+            <ref bean="intelCPU"/>
+        </property>
+        <property name="graphicsCard">
+            <ref bean="nvCard"/>
+        </property>
+    </bean>
+</beans>
