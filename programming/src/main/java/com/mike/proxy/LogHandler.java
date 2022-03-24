@@ -6,6 +6,9 @@ import java.lang.reflect.Proxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * 动态代理
+ */
 public class LogHandler implements InvocationHandler {
     Logger logger = Logger.getLogger(this.getClass().getName());
     private Object originalObj;
