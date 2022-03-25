@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.util.Objects;
 
 public class RPCClient {
     public static Object getRemoteProxyObject(Object serviceInterface, InetSocketAddress address) {
@@ -29,6 +31,8 @@ public class RPCClient {
                     output.writeUTF(method.getName());
                     output.writeObject(method.getParameterTypes());
                     output.writeObject(args);
+
+
 
                     //阻塞等待服务器返回
                     input = new ObjectInputStream(socket.getInputStream());
