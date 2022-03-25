@@ -1,6 +1,5 @@
 package com.mike.rpc;
 
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
@@ -14,28 +13,24 @@ public class RPCClient<T> {
         return (T) Proxy.newProxyInstance(serviceInterface.getClassLoader(), new Class<?>[]{serviceInterface}, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                Socket socket = null;
                 ObjectOutputStream output = null;
                 ObjectInputStream input = null;
-                try {
+                try (
+                        Socket socket = new Socket();
+                ) {
 
-                    socket = new Socket();
                     socket.connect(address);
-
                     //服务编码发送到服务端
-                    ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-                    outputStream.writeUTF(serviceInterface.getName());
-                    outputStream.writeUTF(method.getName());
-                    outputStream.writeObject(method.getParameterTypes());
-                    outputStream.writeObject(args);
+                    output = new ObjectOutputStream(socket.getOutputStream());
+                    output.writeUTF(serviceInterface.getName());
+                    output.writeUTF(method.getName());
+                    output.writeObject(method.getParameterTypes());
+                    output.writeObject(args);
 
                     //阻塞等待服务器返回
                     input = new ObjectInputStream(socket.getInputStream());
                     return input.readObject();
                 } finally {
-                    if (socket != null) {
-                        socket.close();
-                    }
                     if (output != null) {
                         output.close();
                     }
