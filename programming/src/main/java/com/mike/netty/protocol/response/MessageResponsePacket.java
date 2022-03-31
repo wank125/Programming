@@ -1,5 +1,6 @@
-package com.mike.netty.protocol;
+package com.mike.netty.protocol.response;
 
+import com.mike.netty.protocol.Packet;
 import lombok.Data;
 
 import static com.mike.netty.protocol.Command.MESSAGE_RESPONSE;

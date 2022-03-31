@@ -1,5 +1,9 @@
 package com.mike.netty.protocol;
 
+import com.mike.netty.protocol.request.LoginRequestPacket;
+import com.mike.netty.protocol.request.MessageRequestPacket;
+import com.mike.netty.protocol.response.LoginResponsePacket;
+import com.mike.netty.protocol.response.MessageResponsePacket;
 import com.mike.netty.serializer.JSONSerializer;
 import com.mike.netty.serializer.Serializer;
 import io.netty.buffer.ByteBuf;
@@ -30,8 +34,8 @@ public class PacketCodeC {
         serializerMap.put(serializer.getSerializerAlgorithm(), serializer);
     }
 
-    public ByteBuf encode(ByteBufAllocator byteBufAllocator, Packet packet) {
-        ByteBuf byteBuf = byteBufAllocator.ioBuffer();
+    public void encode(ByteBuf byteBuf, Packet packet) {
+
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
         byteBuf.writeInt(MAGIC_NUMBER);
         byteBuf.writeByte(packet.getVersion());
@@ -39,7 +43,7 @@ public class PacketCodeC {
         byteBuf.writeByte(packet.getCommand());
         byteBuf.writeInt(bytes.length);
         byteBuf.writeBytes(bytes);
-        return byteBuf;
+        //return byteBuf;
     }
 
     public Packet decode(ByteBuf byteBuf) {

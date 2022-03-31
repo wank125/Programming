@@ -1,6 +1,10 @@
 package com.mike.netty.client;
 
-import com.mike.netty.protocol.MessageRequestPacket;
+import com.mike.netty.client.handler.LoginResponseHandler;
+import com.mike.netty.client.handler.MessageResponseHandler;
+import com.mike.netty.protocol.PacketDecoder;
+import com.mike.netty.protocol.PacketEncoder;
+import com.mike.netty.protocol.request.MessageRequestPacket;
 import com.mike.netty.protocol.PacketCodeC;
 import com.mike.netty.util.LoginUtil;
 import io.netty.bootstrap.Bootstrap;
@@ -28,8 +32,10 @@ public class NettyClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        //    ch.pipeline().addLast(new FirstClientHandler());
-                        ch.pipeline().addLast(new ClientHandler());
+                        ch.pipeline().addLast(new PacketDecoder());
+                        ch.pipeline().addLast(new LoginResponseHandler());
+                        ch.pipeline().addLast(new MessageResponseHandler());
+                        ch.pipeline().addLast(new PacketEncoder());
                     }
                 });
         connect(bootstrap, "localhost", 8080, 10);
@@ -68,10 +74,7 @@ public class NettyClient {
                         Scanner scanner = new Scanner(System.in);
                         String s = scanner.nextLine();
                         System.out.println("输入消息发送至服务端: " + s);
-                        MessageRequestPacket messageRequestPacket = new MessageRequestPacket();
-                        messageRequestPacket.setMessage(s);
-                        ByteBuf encode = PacketCodeC.INSTANCE.encode(channel.alloc(), messageRequestPacket);
-                        channel.writeAndFlush(encode);
+                        channel.writeAndFlush(new MessageRequestPacket(s));
                     }
                 }
             }

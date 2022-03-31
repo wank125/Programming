@@ -1,6 +1,10 @@
 package com.mike.netty.server;
 
 import com.mike.netty.protocol.*;
+import com.mike.netty.protocol.request.LoginRequestPacket;
+import com.mike.netty.protocol.request.MessageRequestPacket;
+import com.mike.netty.protocol.response.LoginResponsePacket;
+import com.mike.netty.protocol.response.MessageResponsePacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -23,15 +27,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
                 loginResponsePacket.setSuccess(false);
             }
 
-            ByteBuf encode = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginResponsePacket);
-            ctx.channel().writeAndFlush(encode);
+            //ByteBuf encode = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginResponsePacket);
+            //ctx.channel().writeAndFlush(encode);
         } else if (packet instanceof MessageRequestPacket) {
             MessageRequestPacket messageRequestPacket = (MessageRequestPacket) packet;
             System.out.println(new Date() + "： 收到客户端信息:" + messageRequestPacket.getMessage());
             MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
             messageResponsePacket.setMessage("服务端回复: " + messageRequestPacket.getMessage());
-            ByteBuf encode = PacketCodeC.INSTANCE.encode(ctx.alloc(), messageResponsePacket);
-            ctx.channel().writeAndFlush(encode);
+            //ByteBuf encode = PacketCodeC.INSTANCE.encode(ctx.alloc(), messageResponsePacket);
+            //ctx.channel().writeAndFlush(encode);
 
         }
     }

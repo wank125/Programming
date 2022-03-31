@@ -1,4 +1,6 @@
-package com.mike.netty.protocol;
+package com.mike.netty.protocol.request;
+
+import com.mike.netty.protocol.Packet;
 
 import static com.mike.netty.protocol.Command.LOGIN_REQUEST;
 
