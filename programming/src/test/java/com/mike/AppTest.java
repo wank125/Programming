@@ -3,6 +3,7 @@ package com.mike;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.junit.Before;
 
 /**
  * Unit test for simple App.
@@ -19,6 +20,8 @@ public class AppTest
     {
         super( testName );
     }
+
+    @Before
 
     /**
      * @return the suite of tests being tested
