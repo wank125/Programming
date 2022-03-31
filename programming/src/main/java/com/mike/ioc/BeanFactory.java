@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * beans 注入
+ * 依赖注入
  */
 public class BeanFactory {
 

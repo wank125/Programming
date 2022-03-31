@@ -30,7 +30,8 @@ public class ServiceCenter implements Server {
         ServerSocket serverSocket = new ServerSocket();
         serverSocket.bind(new InetSocketAddress(port));
         while (true) {
-            executor.execute(new ServiceTask(serverSocket.accept()));
+            Socket socket = serverSocket.accept();
+            executor.execute(new ServiceTask(socket));
         }
     }
 
@@ -47,7 +48,7 @@ public class ServiceCenter implements Server {
 
     @Override
     public boolean isRunning() {
-        return false;
+        return isRunning;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ServiceCenter implements Server {
             try (ObjectOutputStream outputStream = new ObjectOutputStream(client.getOutputStream());
                  ObjectInputStream input = new ObjectInputStream(client.getInputStream());
             ) {
-                //  input = new ObjectInputStream(client.getInputStream());
+
                 String serviceName = input.readUTF();
                 String methodName = input.readUTF();
                 Class<?>[] parameterTypes = (Class<?>[]) input.readObject();
@@ -81,7 +82,6 @@ public class ServiceCenter implements Server {
 
                 Method method = serviceClass.getMethod(methodName, parameterTypes);
                 Object result = method.invoke(serviceClass.newInstance(), arguments);
-                //  ObjectOutputStream outputStream = new ObjectOutputStream(client.getOutputStream());
                 outputStream.writeObject(result);
 
             } catch (IOException e) {
