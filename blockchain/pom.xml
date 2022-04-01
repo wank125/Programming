@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.niudong</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>blockchain</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>blockchain</name>
 	<description>Demo project for Spring Boot</description>
