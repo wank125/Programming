@@ -13,6 +13,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -32,10 +33,12 @@ public class NettyClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 7, 4));
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new LoginResponseHandler());
                         ch.pipeline().addLast(new MessageResponseHandler());
                         ch.pipeline().addLast(new PacketEncoder());
+                        //  ch.pipeline().addLast(new FirstClientHandler());
                     }
                 });
         connect(bootstrap, "localhost", 8080, 10);
@@ -69,13 +72,10 @@ public class NettyClient {
             @Override
             public void run() {
                 while (!Thread.interrupted()) {
-                    if (LoginUtil.hasLogin(channel)) {
-
-                        Scanner scanner = new Scanner(System.in);
-                        String s = scanner.nextLine();
-                        System.out.println("输入消息发送至服务端: " + s);
-                        channel.writeAndFlush(new MessageRequestPacket(s));
-                    }
+                    Scanner scanner = new Scanner(System.in);
+                    String s = scanner.nextLine();
+                    System.out.println("输入消息发送至服务端: " + s);
+                    channel.writeAndFlush(new MessageRequestPacket(s));
                 }
             }
         }).start();
@@ -86,22 +86,26 @@ class FirstClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
-        System.out.println(new Date() + ": 客户端写出数据");
-        ByteBuf byteBuf = getByteBuf(ctx);
-        ctx.channel().writeAndFlush(byteBuf);
+        for (int i = 0; i < 1000; i++) {
+            ByteBuf buffer = getByteBuf(ctx);
+            ctx.channel().writeAndFlush(buffer);
+        }
+
+//        System.out.println(new Date() + ": 客户端写出数据");
+//        ByteBuf byteBuf = getByteBuf(ctx);
+//        ctx.channel().writeAndFlush(byteBuf);
 
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        //super.channelRead(ctx, msg);
         ByteBuf buf = (ByteBuf) msg;
         System.out.println(new Date() + "客户端读取到的数据是->" + buf.toString(Charset.forName("utf-8")));
     }
 
     private ByteBuf getByteBuf(ChannelHandlerContext ctx) {
         ByteBuf buffer = ctx.alloc().buffer();
-        byte[] bytes = "你好".getBytes(Charset.forName("utf-8"));
+        byte[] bytes = "你好,欢迎关注我".getBytes(Charset.forName("utf-8"));
         buffer.writeBytes(bytes);
         return buffer;
     }

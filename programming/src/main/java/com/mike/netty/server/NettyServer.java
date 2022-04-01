@@ -2,6 +2,7 @@ package com.mike.netty.server;
 
 import com.mike.netty.protocol.PacketDecoder;
 import com.mike.netty.protocol.PacketEncoder;
+import com.mike.netty.server.handler.AuthHandler;
 import com.mike.netty.server.handler.LoginRequestHandler;
 import com.mike.netty.server.handler.MessageRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
@@ -13,6 +14,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -35,10 +37,13 @@ public class NettyServer {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         System.out.println("服务端启动");
+                        ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 7, 4));
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new LoginRequestHandler());
+                        ch.pipeline().addLast(new AuthHandler());
                         ch.pipeline().addLast(new MessageRequestHandler());
                         ch.pipeline().addLast(new PacketEncoder());
+                        ch.pipeline().addLast(new FirstServerHandler());
                     }
                 });
 
@@ -67,8 +72,8 @@ class FirstServerHandler extends ChannelInboundHandlerAdapter {
 
         ByteBuf bytebuf = (ByteBuf) msg;
         System.out.println(new Date() + " :到服务端的数据是->" + bytebuf.toString(Charset.forName("utf-8")));
-        ByteBuf byteBuf = getByteBuf(ctx);
-        ctx.channel().writeAndFlush(byteBuf);
+        //ByteBuf byteBuf = getByteBuf(ctx);
+        //ctx.channel().writeAndFlush(byteBuf);
 
     }
 

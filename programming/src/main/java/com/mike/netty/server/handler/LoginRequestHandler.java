@@ -2,6 +2,7 @@ package com.mike.netty.server.handler;
 
 import com.mike.netty.protocol.request.LoginRequestPacket;
 import com.mike.netty.protocol.response.LoginResponsePacket;
+import com.mike.netty.util.LoginUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -16,6 +17,7 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
         loginResponsePacket.setVersion(loginRequestPacket.getVersion());
         if (valid(loginRequestPacket)) {
             loginResponsePacket.setSuccess(true);
+            LoginUtil.markAsLogin(ctx.channel());
             System.out.println(new Date() + ": 登录成功!");
         } else {
             loginResponsePacket.setReason("账号密码校验失败");
