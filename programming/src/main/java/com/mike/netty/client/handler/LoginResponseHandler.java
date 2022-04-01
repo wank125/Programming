@@ -16,7 +16,7 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
     protected void channelRead0(ChannelHandlerContext ctx, LoginResponsePacket loginResponsePacket) throws Exception {
         if (loginResponsePacket.isSuccess()) {
             System.out.println(new Date() + ": 客户端登录成功");
-            //LoginUtil.markAsLogin(ctx.channel());
+           // LoginUtil.markAsLogin(ctx.channel());
         } else {
             System.out.println(new Date() + ": 客户端登录失败，原因：" + loginResponsePacket.getReason());
         }

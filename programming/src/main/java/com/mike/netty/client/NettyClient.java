@@ -4,8 +4,10 @@ import com.mike.netty.client.handler.LoginResponseHandler;
 import com.mike.netty.client.handler.MessageResponseHandler;
 import com.mike.netty.protocol.PacketDecoder;
 import com.mike.netty.protocol.PacketEncoder;
+import com.mike.netty.protocol.request.LoginRequestPacket;
 import com.mike.netty.protocol.request.MessageRequestPacket;
 import com.mike.netty.protocol.PacketCodeC;
+import com.mike.netty.server.session.SessionUtil;
 import com.mike.netty.util.LoginUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -68,17 +70,38 @@ public class NettyClient {
     }
 
     private static void startConsoleThread(Channel channel) {
+        Scanner sc = new Scanner(System.in);
+        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while (!Thread.interrupted()) {
-                    Scanner scanner = new Scanner(System.in);
-                    String s = scanner.nextLine();
-                    System.out.println("输入消息发送至服务端: " + s);
-                    channel.writeAndFlush(new MessageRequestPacket(s));
+                    if (!SessionUtil.hasLogin(channel)) {
+                        System.out.print("输入用户名登录: ");
+                        String username = sc.nextLine();
+                        loginRequestPacket.setUsername(username);
+
+                        // 密码使用默认的
+                        loginRequestPacket.setPassword("pwd");
+
+                        // 发送登录数据包
+                        channel.writeAndFlush(loginRequestPacket);
+                        waitForLoginResponse();
+                    } else {
+                        String toUserId = sc.next();
+                        String message = sc.next();
+                        channel.writeAndFlush(new MessageRequestPacket(toUserId, message));
+                    }
                 }
             }
         }).start();
+    }
+
+    private static void waitForLoginResponse() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
     }
 }
 

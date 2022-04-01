@@ -7,16 +7,21 @@ import static com.mike.netty.protocol.Command.MESSAGE_REQUEST;
 
 @Data
 public class MessageRequestPacket extends Packet {
-  public MessageRequestPacket(String message) {
-    this.message = message;
-  }
+    public MessageRequestPacket(String message) {
+        this.message = message;
+    }
 
-  private String message;
-  private String toUserId;
+    public MessageRequestPacket(String message, String toUserId) {
+        this.message = message;
+        this.toUserId = toUserId;
+    }
 
-  @Override
-  public Byte getCommand() {
-    return MESSAGE_REQUEST;
-  }
+    private String message;
+    private String toUserId;
+
+    @Override
+    public Byte getCommand() {
+        return MESSAGE_REQUEST;
+    }
 
 }
