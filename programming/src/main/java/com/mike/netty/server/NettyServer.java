@@ -2,10 +2,7 @@ package com.mike.netty.server;
 
 import com.mike.netty.protocol.PacketDecoder;
 import com.mike.netty.protocol.PacketEncoder;
-import com.mike.netty.server.handler.AuthHandler;
-import com.mike.netty.server.handler.CreateGroupRequestHandler;
-import com.mike.netty.server.handler.LoginRequestHandler;
-import com.mike.netty.server.handler.MessageRequestHandler;
+import com.mike.netty.server.handler.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -39,13 +36,17 @@ public class NettyServer {
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         System.out.println("服务端启动");
                         ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 7, 4));
-                        ch.pipeline().addLast(new PacketDecoder());
-                        ch.pipeline().addLast(new LoginRequestHandler());
-                        ch.pipeline().addLast(new AuthHandler());
-                        ch.pipeline().addLast(new MessageRequestHandler());
-                        ch.pipeline().addLast(new CreateGroupRequestHandler());
-                        ch.pipeline().addLast(new PacketEncoder());
-                        //ch.pipeline().addLast(new FirstServerHandler());
+                        ch.pipeline().addLast(PacketDecoder.INSTANCE);
+                        ch.pipeline().addLast(LoginRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(AuthHandler.INSTANCE);
+                        ch.pipeline().addLast(MessageRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(CreateGroupRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(JoinGroupRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(QuitGroupRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(ListGroupMembersRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(GroupMessageRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(LogoutRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(PacketEncoder.INSTANCE);
                     }
                 });
 

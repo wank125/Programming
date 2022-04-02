@@ -1,8 +1,6 @@
 package com.mike.netty.client;
 
-import com.mike.netty.client.handler.CreateGroupResponseHandler;
-import com.mike.netty.client.handler.LoginResponseHandler;
-import com.mike.netty.client.handler.MessageResponseHandler;
+import com.mike.netty.client.handler.*;
 import com.mike.netty.protocol.PacketDecoder;
 import com.mike.netty.protocol.PacketEncoder;
 import com.mike.netty.protocol.command.ConsoleCommandManager;
@@ -43,8 +41,17 @@ public class NettyClient {
                         ch.pipeline().addLast(new LoginResponseHandler());
                         ch.pipeline().addLast(new MessageResponseHandler());
                         ch.pipeline().addLast(new CreateGroupResponseHandler());
+                        ch.pipeline().addLast(new JoinGroupResponseHandler());
+                        // 退群响应处理器
+                        ch.pipeline().addLast(new QuitGroupResponseHandler());
+                        // 获取群成员响应处理器
+                        ch.pipeline().addLast(new ListGroupMembersResponseHandler());
+                        // 群消息响应
+                        ch.pipeline().addLast(new GroupMessageResponseHandler());
+                        // 登出响应处理器
+                        ch.pipeline().addLast(new LogoutResponseHandler());
                         ch.pipeline().addLast(new PacketEncoder());
-                        //  ch.pipeline().addLast(new FirstClientHandler());
+
                     }
                 });
         connect(bootstrap, "localhost", 8080, 10);

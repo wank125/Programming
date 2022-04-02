@@ -12,4 +12,12 @@ public class Session {
         this.userId = userId;
         this.userName = userName;
     }
+
+    @Override
+    public String toString() {
+        return "Session{" +
+                "userId='" + userId + '\'' +
+                ", userName='" + userName + '\'' +
+                '}';
+    }
 }

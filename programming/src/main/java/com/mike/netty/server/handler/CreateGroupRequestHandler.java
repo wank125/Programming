@@ -5,6 +5,7 @@ import com.mike.netty.protocol.response.CreateGroupResponsePacket;
 import com.mike.netty.server.session.SessionUtil;
 import com.mike.netty.util.IDUtil;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
@@ -13,7 +14,10 @@ import io.netty.channel.group.DefaultChannelGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+@ChannelHandler.Sharable
 public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<CreateGroupRequestPacket> {
+
+    public static final CreateGroupRequestHandler INSTANCE = new CreateGroupRequestHandler();
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CreateGroupRequestPacket msg) throws Exception {
 
@@ -32,9 +36,11 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
         }
 
         // 3. 创建群聊创建结果的响应
+        String groupId = IDUtil.randomId();
         CreateGroupResponsePacket createGroupResponsePacket = new CreateGroupResponsePacket();
         createGroupResponsePacket.setSuccess(true);
-        createGroupResponsePacket.setGroupId(IDUtil.randomId());
+        createGroupResponsePacket.setGroupId(groupId);
+       // createGroupResponsePacket.setGroupId(IDUtil.randomId());
         createGroupResponsePacket.setUserNameList(userNameList);
 
         // 4. 给每个客户端发送拉群通知
@@ -42,5 +48,8 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
 
         System.out.print("群创建成功，id 为[" + createGroupResponsePacket.getGroupId() + "], ");
         System.out.println("群里面有：" + createGroupResponsePacket.getUserNameList());
+
+        // 5. 保存群组相关的信息
+        SessionUtil.bindChannelGroup(groupId, channelGroup);
     }
 }

@@ -5,12 +5,15 @@ import com.mike.netty.protocol.response.MessageResponsePacket;
 import com.mike.netty.server.session.Session;
 import com.mike.netty.server.session.SessionUtil;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.Date;
 
+@ChannelHandler.Sharable
 public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRequestPacket> {
+  public static final MessageRequestHandler INSTANCE = new MessageRequestHandler();
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, MessageRequestPacket msg) throws Exception {

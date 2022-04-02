@@ -1,13 +1,7 @@
 package com.mike.netty.protocol;
 
-import com.mike.netty.protocol.request.CreateGroupRequestPacket;
-import com.mike.netty.protocol.request.LoginRequestPacket;
-import com.mike.netty.protocol.request.LogoutRequestPacket;
-import com.mike.netty.protocol.request.MessageRequestPacket;
-import com.mike.netty.protocol.response.CreateGroupResponsePacket;
-import com.mike.netty.protocol.response.LoginResponsePacket;
-import com.mike.netty.protocol.response.LogoutResponsePacket;
-import com.mike.netty.protocol.response.MessageResponsePacket;
+import com.mike.netty.protocol.request.*;
+import com.mike.netty.protocol.response.*;
 import com.mike.netty.serializer.JSONSerializer;
 import com.mike.netty.serializer.Serializer;
 import io.netty.buffer.ByteBuf;
@@ -38,6 +32,15 @@ public class PacketCodeC {
         packetTypeMap.put(CREATE_GROUP_REQUEST, CreateGroupRequestPacket.class);
         packetTypeMap.put(CREATE_GROUP_RESPONSE, CreateGroupResponsePacket.class);
 
+        packetTypeMap.put(LIST_GROUP_MEMBERS_REQUEST, ListGroupMembersRequestPacket.class);
+        packetTypeMap.put(LIST_GROUP_MEMBERS_RESPONSE, ListGroupMembersResponsePacket.class);
+
+        packetTypeMap.put(JOIN_GROUP_REQUEST, JoinGroupRequestPacket.class);
+        packetTypeMap.put(JOIN_GROUP_RESPONSE, JoinGroupResponsePacket.class);
+
+        packetTypeMap.put(GROUP_MESSAGE_REQUEST, GroupMessageRequestPacket.class);
+        packetTypeMap.put(GROUP_MESSAGE_RESPONSE, GroupMessageResponsePacket.class);
+
         serializerMap = new HashMap<>();
         Serializer serializer = new JSONSerializer();
         serializerMap.put(serializer.getSerializerAlgorithm(), serializer);
@@ -52,7 +55,6 @@ public class PacketCodeC {
         byteBuf.writeByte(packet.getCommand());
         byteBuf.writeInt(bytes.length);
         byteBuf.writeBytes(bytes);
-        //return byteBuf;
     }
 
     public Packet decode(ByteBuf byteBuf) {

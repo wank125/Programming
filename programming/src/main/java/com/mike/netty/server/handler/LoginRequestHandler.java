@@ -5,13 +5,19 @@ import com.mike.netty.protocol.response.LoginResponsePacket;
 import com.mike.netty.server.session.Session;
 import com.mike.netty.server.session.SessionUtil;
 import com.mike.netty.util.LoginUtil;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.Date;
 import java.util.UUID;
 
+@ChannelHandler.Sharable
 public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginRequestPacket> {
+
+  // 2. 构造单例
+  public static final LoginRequestHandler INSTANCE = new LoginRequestHandler();
+
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, LoginRequestPacket loginRequestPacket) throws Exception {
     //登陆操作
