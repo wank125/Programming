@@ -3,6 +3,7 @@ package com.mike.netty.server;
 import com.mike.netty.protocol.PacketDecoder;
 import com.mike.netty.protocol.PacketEncoder;
 import com.mike.netty.server.handler.AuthHandler;
+import com.mike.netty.server.handler.CreateGroupRequestHandler;
 import com.mike.netty.server.handler.LoginRequestHandler;
 import com.mike.netty.server.handler.MessageRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
@@ -42,8 +43,9 @@ public class NettyServer {
                         ch.pipeline().addLast(new LoginRequestHandler());
                         ch.pipeline().addLast(new AuthHandler());
                         ch.pipeline().addLast(new MessageRequestHandler());
+                        ch.pipeline().addLast(new CreateGroupRequestHandler());
                         ch.pipeline().addLast(new PacketEncoder());
-                        ch.pipeline().addLast(new FirstServerHandler());
+                        //ch.pipeline().addLast(new FirstServerHandler());
                     }
                 });
 

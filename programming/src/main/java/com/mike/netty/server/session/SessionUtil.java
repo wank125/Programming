@@ -13,7 +13,7 @@ public class SessionUtil {
 
   public static void bindSession(Session session, Channel channel) {
     userIdChannelMap.put(session.getUserId(), channel);
-    channel.attr(Attributes.SESSION).set(null);
+    channel.attr(Attributes.SESSION).set(session);
   }
 
   public static void unBindSession(Channel channel) {

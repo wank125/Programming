@@ -1,9 +1,12 @@
 package com.mike.netty.client;
 
+import com.mike.netty.client.handler.CreateGroupResponseHandler;
 import com.mike.netty.client.handler.LoginResponseHandler;
 import com.mike.netty.client.handler.MessageResponseHandler;
 import com.mike.netty.protocol.PacketDecoder;
 import com.mike.netty.protocol.PacketEncoder;
+import com.mike.netty.protocol.command.ConsoleCommandManager;
+import com.mike.netty.protocol.command.LoginConsoleCommand;
 import com.mike.netty.protocol.request.LoginRequestPacket;
 import com.mike.netty.protocol.request.MessageRequestPacket;
 import com.mike.netty.protocol.PacketCodeC;
@@ -39,6 +42,7 @@ public class NettyClient {
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new LoginResponseHandler());
                         ch.pipeline().addLast(new MessageResponseHandler());
+                        ch.pipeline().addLast(new CreateGroupResponseHandler());
                         ch.pipeline().addLast(new PacketEncoder());
                         //  ch.pipeline().addLast(new FirstClientHandler());
                     }
@@ -70,38 +74,22 @@ public class NettyClient {
     }
 
     private static void startConsoleThread(Channel channel) {
-        Scanner sc = new Scanner(System.in);
-        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
+        ConsoleCommandManager consoleCommandManager = new ConsoleCommandManager();
+        LoginConsoleCommand loginConsoleCommand = new LoginConsoleCommand();
+        Scanner scanner = new Scanner(System.in);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while (!Thread.interrupted()) {
                     if (!SessionUtil.hasLogin(channel)) {
-                        System.out.print("输入用户名登录: ");
-                        String username = sc.nextLine();
-                        loginRequestPacket.setUsername(username);
-
-                        // 密码使用默认的
-                        loginRequestPacket.setPassword("pwd");
-
-                        // 发送登录数据包
-                        channel.writeAndFlush(loginRequestPacket);
-                        waitForLoginResponse();
+                        loginConsoleCommand.exec(scanner, channel);
                     } else {
-                        String toUserId = sc.next();
-                        String message = sc.next();
-                        channel.writeAndFlush(new MessageRequestPacket(toUserId, message));
+                        consoleCommandManager.exec(scanner, channel);
                     }
                 }
             }
         }).start();
-    }
-
-    private static void waitForLoginResponse() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-        }
     }
 }
 

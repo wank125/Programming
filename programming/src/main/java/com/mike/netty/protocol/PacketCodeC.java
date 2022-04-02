@@ -1,8 +1,12 @@
 package com.mike.netty.protocol;
 
+import com.mike.netty.protocol.request.CreateGroupRequestPacket;
 import com.mike.netty.protocol.request.LoginRequestPacket;
+import com.mike.netty.protocol.request.LogoutRequestPacket;
 import com.mike.netty.protocol.request.MessageRequestPacket;
+import com.mike.netty.protocol.response.CreateGroupResponsePacket;
 import com.mike.netty.protocol.response.LoginResponsePacket;
+import com.mike.netty.protocol.response.LogoutResponsePacket;
 import com.mike.netty.protocol.response.MessageResponsePacket;
 import com.mike.netty.serializer.JSONSerializer;
 import com.mike.netty.serializer.Serializer;
@@ -28,6 +32,11 @@ public class PacketCodeC {
         packetTypeMap.put(LOGIN_RESPONSE, LoginResponsePacket.class);
         packetTypeMap.put(MESSAGE_REQUEST, MessageRequestPacket.class);
         packetTypeMap.put(MESSAGE_RESPONSE, MessageResponsePacket.class);
+
+        packetTypeMap.put(LOGOUT_REQUEST, LogoutRequestPacket.class);
+        packetTypeMap.put(LOGOUT_RESPONSE, LogoutResponsePacket.class);
+        packetTypeMap.put(CREATE_GROUP_REQUEST, CreateGroupRequestPacket.class);
+        packetTypeMap.put(CREATE_GROUP_RESPONSE, CreateGroupResponsePacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = new JSONSerializer();
