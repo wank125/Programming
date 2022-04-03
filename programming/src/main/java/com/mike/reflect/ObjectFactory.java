@@ -1,10 +1,9 @@
-package com.mike.reeflect;
+package com.mike.reflect;
 
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 class Person {
     private String name;
@@ -67,7 +66,7 @@ public class ObjectFactory {
 
             //修改字段值
 
-            Class<?> clz = Class.forName("com.mike.reeflect.Person");
+            Class<?> clz = Class.forName("com.mike.reflect.Person");
             Constructor<?> constructor = clz.getConstructor(String.class);
             Object obj = constructor.newInstance("zhangsan");
             System.out.println(obj);

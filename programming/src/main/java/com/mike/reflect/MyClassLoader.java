@@ -1,4 +1,4 @@
-package com.mike.reeflect;
+package com.mike.reflect;
 
 import java.io.*;
 

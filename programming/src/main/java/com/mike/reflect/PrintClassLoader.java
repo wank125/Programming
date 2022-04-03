@@ -1,4 +1,4 @@
-package com.mike.reeflect;
+package com.mike.reflect;
 
 public class PrintClassLoader {
 
@@ -15,7 +15,7 @@ public class PrintClassLoader {
         System.out.println("String类的类加载器" + classLoader);
 
         //获取当前类的类加载器
-        Class<?> clz = Class.forName("com.mike.reeflect.PrintClassLoader");
+        Class<?> clz = Class.forName("com.mike.reflect.PrintClassLoader");
         ClassLoader classLoader1 = clz.getClassLoader();
         System.out.println("当前类的类加载器：" + classLoader);
 
