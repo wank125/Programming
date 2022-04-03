@@ -36,7 +36,7 @@ public class NettyServer {
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         System.out.println("服务端启动");
                         ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 7, 4));
-                        ch.pipeline().addLast(PacketDecoder.INSTANCE);
+                        ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(LoginRequestHandler.INSTANCE);
                         ch.pipeline().addLast(AuthHandler.INSTANCE);
                         ch.pipeline().addLast(MessageRequestHandler.INSTANCE);
@@ -46,7 +46,7 @@ public class NettyServer {
                         ch.pipeline().addLast(ListGroupMembersRequestHandler.INSTANCE);
                         ch.pipeline().addLast(GroupMessageRequestHandler.INSTANCE);
                         ch.pipeline().addLast(LogoutRequestHandler.INSTANCE);
-                        ch.pipeline().addLast(PacketEncoder.INSTANCE);
+                        ch.pipeline().addLast(new PacketEncoder());
                     }
                 });
 

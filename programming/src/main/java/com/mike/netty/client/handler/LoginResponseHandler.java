@@ -1,14 +1,10 @@
 package com.mike.netty.client.handler;
 
-import com.mike.netty.protocol.request.LoginRequestPacket;
 import com.mike.netty.protocol.response.LoginResponsePacket;
 import com.mike.netty.server.session.Session;
 import com.mike.netty.server.session.SessionUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
-import java.util.Date;
-import java.util.UUID;
 
 public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginResponsePacket> {
     @Override

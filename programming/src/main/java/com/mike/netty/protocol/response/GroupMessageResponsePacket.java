@@ -4,6 +4,8 @@ import com.mike.netty.protocol.Packet;
 import com.mike.netty.server.session.Session;
 import lombok.Data;
 
+import static com.mike.netty.protocol.Command.GROUP_MESSAGE_RESPONSE;
+
 @Data
 public class GroupMessageResponsePacket extends Packet {
     private String fromGroupId;
@@ -12,6 +14,6 @@ public class GroupMessageResponsePacket extends Packet {
 
     @Override
     public Byte getCommand() {
-        return null;
+        return GROUP_MESSAGE_RESPONSE;
     }
 }
