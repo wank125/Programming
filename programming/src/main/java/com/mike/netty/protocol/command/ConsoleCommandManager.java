@@ -1,8 +1,7 @@
 package com.mike.netty.protocol.command;
 
-import com.mike.netty.client.ClientServiceImpl;
-import com.mike.netty.client.ClientServiceProxy;
-import com.mike.netty.protocol.request.MessageRequestPacket;
+
+import com.mike.netty.client.ClientServiceProxyFactory;
 import io.netty.channel.Channel;
 
 import java.util.HashMap;
@@ -11,14 +10,19 @@ import java.util.Scanner;
 
 public class ConsoleCommandManager implements ConsoleCommand {
 
-    private ClientCommand clientCommand;
+
+    // private ClientCommand clientCommand;
     private Map<String, ConsoleCommand> consoleCommandMap;
+    private Channel channel;
+
+    public ConsoleCommandManager(Channel channel) {
+        this.channel = channel;
+    }
 
 
     public ConsoleCommandManager() {
 
-        clientCommand = (ClientCommand) new ClientServiceProxy().bind(new ClientCommandImpl());
-
+        // clientCommand = new ClientCommandImpl();
         consoleCommandMap = new HashMap<>();
         consoleCommandMap.put("sendToUser", new SendToUserConsoleCommand());
         consoleCommandMap.put("logout", new LogoutConsoleCommand());
@@ -31,7 +35,6 @@ public class ConsoleCommandManager implements ConsoleCommand {
     @Override
     public void exec(Scanner scanner, Channel channel) {
         String command = scanner.next();
-        // ConsoleCommand consoleCommand = consoleCommandMap.get(command);
         if (command != null) {
             //consoleCommand.exec(scanner, channel);
             doExec(command, scanner, channel);
@@ -41,6 +44,7 @@ public class ConsoleCommandManager implements ConsoleCommand {
     }
 
     private void doExec(String command, Scanner scanner, Channel channel) {
+        ClientCommandImpl clientCommand = new ClientCommandImpl();
         switch (command) {
             case "sendToUser":
                 clientCommand.sendToUser(scanner, channel);
@@ -64,14 +68,13 @@ public class ConsoleCommandManager implements ConsoleCommand {
     }
 
     class ClientCommandImpl implements ClientCommand {
-        ClientService clientService;
+        ClientService clientService = (ClientService) ClientServiceProxyFactory.getProxy(ClientService.class, channel);
 
         @Override
         public void sendToUser(Scanner scanner, Channel channel) {
             System.out.print("发送消息给某个某个用户：");
             String toUserId = scanner.next();
             String message = scanner.next();
-            //channel.writeAndFlush(new MessageRequestPacket(toUserId, message));
             clientService.sendToUser(toUserId, message);
         }
 
