@@ -1,4 +1,4 @@
-package codec;
+package basic.codec;
 
 import io.netty.handler.codec.marshalling.DefaultMarshallerProvider;
 import io.netty.handler.codec.marshalling.DefaultUnmarshallerProvider;

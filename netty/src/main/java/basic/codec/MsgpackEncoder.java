@@ -1,10 +1,10 @@
-package codec;
+package basic.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.msgpack.MessagePack;
-import user.UserInfo;
+import basic.pojo.UserInfo;
 
 public class MsgpackEncoder extends MessageToByteEncoder<Object> {
     @Override

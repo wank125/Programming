@@ -1,10 +1,10 @@
-package codec;
+package basic.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import org.msgpack.MessagePack;
-import user.UserInfo;
+import basic.pojo.UserInfo;
 
 import java.util.List;
 

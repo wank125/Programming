@@ -1,8 +1,6 @@
-package client;
+package basic.client;
 
-import codec.MarshallingCodeCFactory;
-import codec.MsgpackDecoder;
-import codec.MsgpackEncoder;
+import basic.codec.MarshallingCodeCFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -10,8 +8,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
 
 public class SubReqClient {
     private final int sendNumber;

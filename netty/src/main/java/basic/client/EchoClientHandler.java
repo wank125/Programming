@@ -1,10 +1,8 @@
-package client;
+package basic.client;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import user.UserInfo;
+import basic.pojo.UserInfo;
 
 import java.util.logging.Logger;
 

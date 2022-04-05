@@ -1,4 +1,4 @@
-package message;
+package basic.message;
 
 import org.msgpack.MessagePack;
 import org.msgpack.template.Templates;
