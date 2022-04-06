@@ -16,14 +16,17 @@
 package com.mike.remotecall.client;
 
 import com.mike.remotecall.Call;
-import com.mike.remotecall.NettyConstant;
 import com.mike.remotecall.codec.NettyMessageDecoder;
 import com.mike.remotecall.codec.NettyMessageEncoder;
 import com.mike.remotecall.struct.Header;
 import com.mike.remotecall.struct.MessageType;
 import com.mike.remotecall.struct.NettyMessage;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -31,7 +34,6 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -64,7 +66,7 @@ public class NettyClientConnector {
 //            ChannelFuture future = b.connect(new InetSocketAddress(host, port), new InetSocketAddress(NettyConstant.LOCALIP,
 //                    NettyConstant.LOCAL_PORT)).sync();
 
-            ChannelFuture future = b.connect(host, 8000).sync();
+            ChannelFuture future = b.connect(host, port).sync();
             //
             this.channel = future.channel();
             future.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
