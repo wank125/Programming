@@ -27,14 +27,14 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class NettyClientConnector {
     private final String host;
@@ -61,29 +61,37 @@ public class NettyClientConnector {
                     .option(ChannelOption.TCP_NODELAY, true)
                     .handler(this.initializer);
             // 发起异步连接操作
-            ChannelFuture future = b.connect(new InetSocketAddress(host, port), new InetSocketAddress(NettyConstant.LOCALIP,
-                    NettyConstant.LOCAL_PORT)).sync();
+//            ChannelFuture future = b.connect(new InetSocketAddress(host, port), new InetSocketAddress(NettyConstant.LOCALIP,
+//                    NettyConstant.LOCAL_PORT)).sync();
+
+            ChannelFuture future = b.connect(host, 8000).sync();
             //
             this.channel = future.channel();
-            future.channel().closeFuture().sync();
+            future.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    System.out.println("客户端已关闭");
+                }
+            });
+            // future.channel().closeFuture().sync();
         } finally {
             //group.shutdownGracefully();
             // 所有资源释放完成之后，清空资源，再次发起重连操作
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                        try {
-                            connect();// 发起重连操作
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+//            executor.execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        TimeUnit.SECONDS.sleep(1);
+//                        try {
+//                            connect();// 发起重连操作
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
         }
     }
 
@@ -92,7 +100,6 @@ public class NettyClientConnector {
         future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
-
                 if (future.isSuccess()) {
                     System.out.println("===========发送成功");
                 } else {
@@ -110,30 +117,30 @@ public class NettyClientConnector {
     private NettyMessage buildCallReq(Object obj) {
         NettyMessage message = new NettyMessage();
         Header header = new Header();
-        header.setType(MessageType.LOGIN_REQ.value());
+        header.setType(MessageType.CALL_REQ.value());
         message.setHeader(header);
         message.setBody(obj);
         return message;
     }
 
     public void close() throws Exception {
+
         this.channel.close();
         this.executor.shutdown();
     }
 
     class SimpleChatClientInitializer extends ChannelInitializer<SocketChannel> {
-        private CountDownLatch lathc;
-        private RpcClientHandler handler = new RpcClientHandler(lathc);
+        private RpcClientHandler handler;
 
         public SimpleChatClientInitializer(CountDownLatch lathc) {
-            this.lathc = lathc;
+            handler = new RpcClientHandler(lathc);
         }
 
         @Override
         protected void initChannel(SocketChannel ch) throws Exception {
             ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4));
             ch.pipeline().addLast("MessageEncoder", new NettyMessageEncoder());
-            ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(50));
+            //    ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(50));
             ch.pipeline().addLast("RpcClientHandler", handler);
         }
 

@@ -12,4 +12,9 @@ public class HelloServiceImpl implements HelloService {
     public Date getTime() {
         return new Date();
     }
+
+    @Override
+    public String toString() {
+        return "HelloServiceImpl{}";
+    }
 }

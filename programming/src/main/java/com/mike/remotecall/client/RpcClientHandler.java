@@ -24,43 +24,43 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import java.util.concurrent.CountDownLatch;
 
 public class RpcClientHandler extends ChannelInboundHandlerAdapter {
-    public RpcClientHandler(CountDownLatch lathc) {
-        this.lathc = lathc;
-    }
+  public RpcClientHandler(CountDownLatch lathc) {
+    this.lathc = lathc;
+  }
 
-    private CountDownLatch lathc;
-    private Call result;
+  private CountDownLatch lathc;
+  private Call result;
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+  @Override
+  public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
-        NettyMessage message = (NettyMessage) msg;
-        // 如果是握手应答消息，需要判断是否认证成功
-        if (message.getHeader() != null
-                && message.getHeader().getType() == MessageType.CALL_RESP.value()) {
-            result = (Call) message.getBody();
-            if (result != null) {
-                System.out.printf("Call for result : " + result.toString());
-            }
-            lathc.countDown();//消息收取完毕后释放同步锁
-        } else
-            ctx.fireChannelRead(msg);
+    NettyMessage message = (NettyMessage) msg;
+    // 如果是握手应答消息，需要判断是否认证成功
+    if (message.getHeader() != null
+        && message.getHeader().getType() == MessageType.CALL_RESP.value()) {
+      result = (Call) message.getBody();
+      if (result != null) {
+        System.out.printf("Call for result : " + "Class Name : " + result.getClass().getName() + result.toString());
+      }
+      lathc.countDown();//消息收取完毕后释放同步锁
+    } else
+      ctx.fireChannelRead(msg);
 
-    }
+  }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+  @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 
-        cause.printStackTrace();
-        ctx.close();
-        ctx.fireExceptionCaught(cause);
-    }
+    cause.printStackTrace();
+    ctx.close();
+    ctx.fireExceptionCaught(cause);
+  }
 
-    public Call getResult() {
-        return result;
-    }
+  public Call getResult() {
+    return result;
+  }
 
-    public void resetLatch(CountDownLatch initLathc) {
-        this.lathc = initLathc;
-    }
+  public void resetLatch(CountDownLatch initLathc) {
+    this.lathc = initLathc;
+  }
 }

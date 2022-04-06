@@ -6,8 +6,10 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.RemoteException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+
+/**
+ * 动态代理-Netty
+ */
 
 public class ProxyFactory {
 
@@ -16,7 +18,7 @@ public class ProxyFactory {
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                NettyClientConnector connector = new NettyClientConnector(host,port);
+                NettyClientConnector connector = new NettyClientConnector(host, port);
                 try {
                     connector.connect();
                     Call call = new Call(classType.getName(), method.getName(), method.getParameterTypes(), args);
@@ -27,11 +29,14 @@ public class ProxyFactory {
                         throw new RemoteException("", (Throwable) result);
                     }
                     return result;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 } finally {
                     if (connector != null) {
                         connector.close();
                     }
                 }
+                return null;
             }
         };
 

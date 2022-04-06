@@ -40,16 +40,22 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
         NettyMessage message = (NettyMessage) msg;
         if (message.getHeader() != null
                 && message.getHeader().getType() == MessageType.CALL_REQ.value()) {
-            NettyMessage loginResp = null;
+            NettyMessage resp = null;
             Call call = (Call) message.getBody();
             Call invoke = invoke(call);
-            loginResp = buildResponse(invoke);
-            System.out.println("The login response is : " + loginResp
-                    + " body [" + loginResp.getBody() + "]");
-            ctx.writeAndFlush(loginResp);
+            resp = buildResponse(invoke);
+            System.out.println("The login response is : " + resp
+                    + " body [" + resp.getBody() + "]");
+            ctx.writeAndFlush(resp);
         } else {
             ctx.fireChannelRead(msg);
         }
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("收到客户端连接");
+        super.channelActive(ctx);
     }
 
     @Override

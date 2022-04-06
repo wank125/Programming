@@ -31,39 +31,39 @@ import java.util.Map;
 
 public class NettyServerConnector {
 
-    private Map<String, Object> remoteObjects = new HashMap();
+  private Map<String, Object> remoteObjects = new HashMap();
 
-    public void register(String className, Object remoteObject) {
-        remoteObjects.put(className, remoteObject);
-    }
+  public void register(String className, Object remoteObject) {
+    remoteObjects.put(className, remoteObject);
+  }
 
 
-    public void bind() throws Exception {
-        NioEventLoopGroup bossGroup = new NioEventLoopGroup();
-        NioEventLoopGroup workGroup = new NioEventLoopGroup();
-        ServerBootstrap b = new ServerBootstrap();
-        b.group(bossGroup, workGroup)
-                .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_BACKLOG, 1024)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4));
-                        ch.pipeline().addLast(new NettyMessageEncoder());
-                        ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(50));
-                        ch.pipeline().addLast("RpcServerHandler", new RpcServerHandler());
-                    }
-                });
-        b.bind(NettyConstant.REMOTEIP, NettyConstant.PORT).sync();
-        System.out.println("Netty server start ok : "
-                + (NettyConstant.REMOTEIP + " : " + NettyConstant.PORT));
+  public void bind() throws Exception {
+    NioEventLoopGroup bossGroup = new NioEventLoopGroup();
+    NioEventLoopGroup workGroup = new NioEventLoopGroup();
+    ServerBootstrap b = new ServerBootstrap();
+    b.group(bossGroup, workGroup)
+        .channel(NioServerSocketChannel.class)
+        .option(ChannelOption.SO_BACKLOG, 1024)
+        .childHandler(new ChannelInitializer<SocketChannel>() {
+          @Override
+          protected void initChannel(SocketChannel ch) throws Exception {
+            ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4));
+            ch.pipeline().addLast(new NettyMessageEncoder());
+            ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(50));
+            ch.pipeline().addLast("RpcServerHandler", new RpcServerHandler());
+          }
+        });
+    b.bind(NettyConstant.REMOTEIP, NettyConstant.PORT).sync();
+    System.out.println("Netty server start ok : "
+        + (NettyConstant.REMOTEIP + " : " + NettyConstant.PORT));
 
-    }
+  }
 
-    public static void main(String[] args) throws Exception {
-        NettyServerConnector connector = new NettyServerConnector();
-        connector.bind();
-    }
+  public static void main(String[] args) throws Exception {
+    NettyServerConnector connector = new NettyServerConnector();
+    connector.bind();
+  }
 
 
 }
