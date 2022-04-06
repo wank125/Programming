@@ -1,9 +1,9 @@
 package basic.server;
 
+import basic.pojo.SubscribeReq;
+import basic.pojo.SubscribeResp;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import basic.client.pojo.SubscribeReq;
-import basic.client.pojo.SubscribeResp;
 
 public class SubReqServerHandler extends ChannelInboundHandlerAdapter {
 //    @Override
