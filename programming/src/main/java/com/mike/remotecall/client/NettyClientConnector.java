@@ -44,24 +44,33 @@ public class NettyClientConnector {
 
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
     private Channel channel;
-    private SimpleChatClientInitializer initializer;
+    //private SimpleChatClientInitializer initializer;
     private CountDownLatch lathc = new CountDownLatch(1);
 
     public NettyClientConnector(String host, int port) throws Exception {
         this.host = host;
         this.port = port;
-        this.initializer = new SimpleChatClientInitializer(lathc);
+       // this.initializer = new SimpleChatClientInitializer(lathc);
     }
 
 
     public void connect() throws Exception {
         NioEventLoopGroup group = new NioEventLoopGroup();
+        RpcClientHandler handler = new RpcClientHandler();
         try {
             Bootstrap b = new Bootstrap();
             b.group(group)
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.TCP_NODELAY, true)
-                    .handler(this.initializer);
+                    //.handler(this.initializer);
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4));
+                            ch.pipeline().addLast("MessageEncoder", new NettyMessageEncoder());
+                            ch.pipeline().addLast("RpcClientHandler", handler);
+                        }
+                    });
             // 发起异步连接操作
 //            ChannelFuture future = b.connect(new InetSocketAddress(host, port), new InetSocketAddress(NettyConstant.LOCALIP,
 //                    NettyConstant.LOCAL_PORT)).sync();
@@ -97,8 +106,9 @@ public class NettyClientConnector {
         }
     }
 
-    public void send(Object obj) throws IOException {
+    public void send(Object obj) throws IOException, InterruptedException {
         ChannelFuture future = channel.writeAndFlush(buildCallReq(obj));
+        //future.sync();
         future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
@@ -111,10 +121,10 @@ public class NettyClientConnector {
         });
     }
 
-    public Object receive() throws Exception {
-        this.lathc.await();
-        return this.initializer.getResult();
-    }
+//    public Object receive() throws Exception {
+//        this.lathc.await();
+//        return this.initializer.getResult();
+//    }
 
     private NettyMessage buildCallReq(Object obj) {
         NettyMessage message = new NettyMessage();
@@ -131,30 +141,29 @@ public class NettyClientConnector {
         this.executor.shutdown();
     }
 
-    class SimpleChatClientInitializer extends ChannelInitializer<SocketChannel> {
-        private RpcClientHandler handler;
-
-        public SimpleChatClientInitializer(CountDownLatch lathc) {
-            handler = new RpcClientHandler(lathc);
-        }
-
-        @Override
-        protected void initChannel(SocketChannel ch) throws Exception {
-            ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4));
-            ch.pipeline().addLast("MessageEncoder", new NettyMessageEncoder());
-            //    ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(50));
-            ch.pipeline().addLast("RpcClientHandler", handler);
-        }
-
-        public Call getResult() {
-            return this.handler.getResult();
-        }
-
-        //重置同步锁
-        public void resetLathc(CountDownLatch initLathc) {
-            handler.resetLatch(initLathc);
-        }
-    }
+//    class SimpleChatClientInitializer extends ChannelInitializer<SocketChannel> {
+//        private RpcClientHandler handler;
+//
+//        public SimpleChatClientInitializer(CountDownLatch lathc) {
+//            handler = new RpcClientHandler(lathc);
+//        }
+//
+//        @Override
+//        protected void initChannel(SocketChannel ch) throws Exception {
+//            ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4));
+//            ch.pipeline().addLast("MessageEncoder", new NettyMessageEncoder());
+//            ch.pipeline().addLast("RpcClientHandler", handler);
+//        }
+//
+//        public Call getResult() {
+//            return this.handler.getResult();
+//        }
+//
+//        //重置同步锁
+//        public void resetLathc(CountDownLatch initLathc) {
+//            handler.resetLatch(initLathc);
+//        }
+//    }
 
 
 }

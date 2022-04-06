@@ -21,14 +21,10 @@ import com.mike.remotecall.struct.NettyMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
-import java.util.concurrent.CountDownLatch;
-
 public class RpcClientHandler extends ChannelInboundHandlerAdapter {
-  public RpcClientHandler(CountDownLatch lathc) {
-    this.lathc = lathc;
+    public RpcClientHandler() {
   }
 
-  private CountDownLatch lathc;
   private Call result;
 
   @Override
@@ -40,9 +36,8 @@ public class RpcClientHandler extends ChannelInboundHandlerAdapter {
         && message.getHeader().getType() == MessageType.CALL_RESP.value()) {
       result = (Call) message.getBody();
       if (result != null) {
-        System.out.printf("Call for result : " + "Class Name : " + result.getClass().getName() + result.toString());
+        System.out.printf("Call for result : " + "Class Name : " + result.getClass().getName() + result);
       }
-      lathc.countDown();//消息收取完毕后释放同步锁
     } else
       ctx.fireChannelRead(msg);
 
@@ -58,9 +53,5 @@ public class RpcClientHandler extends ChannelInboundHandlerAdapter {
 
   public Call getResult() {
     return result;
-  }
-
-  public void resetLatch(CountDownLatch initLathc) {
-    this.lathc = initLathc;
   }
 }
