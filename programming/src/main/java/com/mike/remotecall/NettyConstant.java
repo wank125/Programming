@@ -1,4 +1,4 @@
-package protocol;
+package com.mike.remotecall;
 
 
 public final class NettyConstant {
