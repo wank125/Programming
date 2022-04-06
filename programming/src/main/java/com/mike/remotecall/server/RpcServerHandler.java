@@ -15,7 +15,7 @@
  */
 package com.mike.remotecall.server;
 
-import com.mike.remotecall.Call;
+import com.mike.remotecall.struct.Call;
 import com.mike.remotecall.HelloServiceImpl;
 import com.mike.remotecall.struct.Header;
 import com.mike.remotecall.struct.MessageType;

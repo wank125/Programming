@@ -1,6 +1,6 @@
 package com.mike.netty.client;
 
-import com.mike.remotecall.Call;
+import com.mike.remotecall.struct.Call;
 import io.netty.channel.Channel;
 
 import java.lang.reflect.InvocationHandler;

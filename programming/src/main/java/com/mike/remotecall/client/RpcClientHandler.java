@@ -15,7 +15,7 @@
  */
 package com.mike.remotecall.client;
 
-import com.mike.remotecall.Call;
+import com.mike.remotecall.struct.Call;
 import com.mike.remotecall.struct.MessageType;
 import com.mike.remotecall.struct.NettyMessage;
 import io.netty.channel.ChannelHandlerContext;

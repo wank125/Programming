@@ -15,7 +15,7 @@
  */
 package com.mike.remotecall.client;
 
-import com.mike.remotecall.Call;
+import com.mike.remotecall.struct.Call;
 import com.mike.remotecall.codec.NettyMessageDecoder;
 import com.mike.remotecall.codec.NettyMessageEncoder;
 import com.mike.remotecall.struct.Header;

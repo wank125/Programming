@@ -1,6 +1,7 @@
 package com.mike.remotecall;
 
 import com.mike.remotecall.client.NettyClientConnector;
+import com.mike.remotecall.struct.Call;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
