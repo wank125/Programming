@@ -1,8 +1,18 @@
 package tomcat;
 
-import java.io.*;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -45,35 +55,60 @@ public class GPTomcat {
     public void start() throws IOException {
 
         init();
-        server = new ServerSocket(this.port);
-        System.out.println("服务已经启动,端口号 : " + this.port);
-        while (true) {
-            Socket client = server.accept();
-            process(client);
+
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup();
+        NioEventLoopGroup workGroup = new NioEventLoopGroup();
+        try {
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(bossGroup, workGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(new HttpResponseEncoder());
+                            ch.pipeline().addLast(new HttpRequestDecoder());
+                            ch.pipeline().addLast(new GPTomcatHandler());
+                        }
+                    })
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+            ChannelFuture future = bootstrap.bind(this.port).sync();
+            future.channel().closeFuture().sync();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            bossGroup.shutdownGracefully();
+            workGroup.shutdownGracefully();
         }
-    }
-
-    private void process(Socket client) throws IOException {
-        InputStream in = client.getInputStream();
-        OutputStream out = client.getOutputStream();
-
-        GPRequest gpRequest = new GPRequest(in);
-        GPResponse gpResponse = new GPResponse(out);
-
-        String url = gpRequest.getUrl();
-        if (servletMapping.containsKey(url)) {
-            servletMapping.get(url).service(gpRequest, gpResponse);
-        } else {
-            gpResponse.write("404-Not Found");
-        }
-
-        out.flush();
-        out.close();
-        in.close();
-        client.close();
     }
 
     public static void main(String[] args) throws IOException {
         new GPTomcat().start();
+    }
+
+    class GPTomcatHandler extends ChannelInboundHandlerAdapter {
+        @Override
+        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+            if (msg instanceof HttpRequest) {
+                System.out.println("hello");
+                HttpRequest req = (HttpRequest) msg;
+                GPRequest request = new GPRequest(ctx, req);
+                GPResponse response = new GPResponse(ctx, req);
+                String url = request.getUrl();
+                if (servletMapping.containsKey(url)){
+                    servletMapping.get(url).service(request,response);
+                }else {
+                    response.write("404 - Not Found");
+                }
+            }
+
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+            cause.printStackTrace();
+            ctx.close();
+        }
     }
 }
