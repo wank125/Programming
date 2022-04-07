@@ -1,5 +1,6 @@
 package com.mike.remotecall;
 
+import com.mike.remotecall.server.impl.HelloServiceImpl;
 import com.mike.remotecall.struct.Call;
 
 import java.io.InputStream;
@@ -67,7 +68,7 @@ public class SimpleServer {
 
     public static void main(String[] args) throws Exception {
         SimpleServer simpleServer = new SimpleServer();
-        simpleServer.register("com.mike.remotecall.HelloService", new HelloServiceImpl());
+        //simpleServer.register("com.mike.remotecall.HelloService", new HelloServiceImpl());
         simpleServer.service();
     }
 }

@@ -2,6 +2,7 @@ package com.mike.remotecall.client;
 
 import com.mike.remotecall.HelloService;
 import com.mike.remotecall.ProxyFactory;
+import com.mike.remotecall.api.IRpcService;
 
 import java.util.Date;
 
@@ -14,5 +15,14 @@ public class SimpleNettyClient {
         System.out.println(hello);
         Date time = helloService.getTime();
         System.out.println(time);
+
+
+        IRpcService rpcService = (IRpcService) ProxyFactory.getProxy(IRpcService.class, "localhost", 8000);
+        int sub = rpcService.sub(1, 3);
+        System.out.println(sub);
+
+        int add = rpcService.add(2, 2);
+        System.out.println(add);
+
     }
 }

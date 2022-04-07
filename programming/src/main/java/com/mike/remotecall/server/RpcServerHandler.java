@@ -16,23 +16,40 @@
 package com.mike.remotecall.server;
 
 import com.mike.remotecall.struct.Call;
-import com.mike.remotecall.HelloServiceImpl;
+import com.mike.remotecall.server.impl.HelloServiceImpl;
 import com.mike.remotecall.struct.Header;
 import com.mike.remotecall.struct.MessageType;
 import com.mike.remotecall.struct.NettyMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RpcServerHandler extends ChannelInboundHandlerAdapter {
+
+    //保存所有可用服务
+    public static ConcurrentHashMap<String, Object> registryMap = new ConcurrentHashMap<>();
+
+    //保存所有相关的服务类
+    List<String> classNames = new ArrayList<String>();
+
 
     private static Map<String, Object> remoteObjects = new HashMap();
 
     static {
-        remoteObjects.put("com.mike.remotecall.HelloService", new HelloServiceImpl());
+        // remoteObjects.put("com.mike.remotecall.HelloService", new HelloServiceImpl());
+    }
+
+    public RpcServerHandler() {
+        scannerClass("com.mike.remotecall.server.impl");
+        doRegister();
     }
 
     @Override
@@ -44,12 +61,12 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
             Call call = (Call) message.getBody();
             Call invoke = invoke(call);
             resp = buildResponse(invoke);
-            System.out.println("The login response is : " + resp
-                    + " body [" + resp.getBody() + "]");
+            System.out.println("The Call response is : " + resp + " body [" + resp.getBody() + "]");
             ctx.writeAndFlush(resp);
         } else {
             ctx.fireChannelRead(msg);
         }
+        ctx.close();
     }
 
     @Override
@@ -75,7 +92,7 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     public Call invoke(Call call) {
-        Object result = null;
+        Object result;
         try {
             String className = call.getClassName();
             String methodName = call.getMethodName();
@@ -84,7 +101,8 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
             Class<?> classType = Class.forName(className);
             Method method = classType.getMethod(methodName, paramTypes);
-            Object remoteObject = remoteObjects.get(className);
+            //  Object remoteObject = remoteObjects.get(className);
+            Object remoteObject = registryMap.get(className);
             if (remoteObject == null) {
                 throw new Exception(className + "的远程对象不存在");
             } else {
@@ -97,4 +115,37 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
         call.setResult(result);
         return call;
     }
+
+    private void scannerClass(String packageName) {
+        URL url = this.getClass().getClassLoader().getResource(packageName.replaceAll("\\.", "/"));
+        File dir = new File(url.getFile());
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                scannerClass(packageName + "." + file.getName());
+            } else {
+                classNames.add(packageName + "." + file.getName().replaceAll(".class", "").trim());
+            }
+        }
+    }
+
+    private void doRegister() {
+        if (classNames.size() == 0) {
+            return;
+        }
+        for (String className : classNames) {
+            try {
+                Class<?> clazz = Class.forName(className);
+                Class<?> clazzInterface = clazz.getInterfaces()[0];
+                registryMap.put(clazzInterface.getName(), clazz.newInstance());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }

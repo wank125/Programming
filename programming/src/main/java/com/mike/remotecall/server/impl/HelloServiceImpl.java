@@ -1,4 +1,6 @@
-package com.mike.remotecall;
+package com.mike.remotecall.server.impl;
+
+import com.mike.remotecall.HelloService;
 
 import java.util.Date;
 
