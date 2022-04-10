@@ -1,6 +1,4 @@
-package com.mike.socket.multithread4;
-
-import com.mike.thread.ShutDown;
+package com.mike.socket.ch03.multithread4;
 
 import java.io.BufferedReader;
 import java.io.IOException;

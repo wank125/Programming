@@ -1,4 +1,4 @@
-package com.mike.socket.file;
+package com.mike.socket.ch03.file;
 
 import java.io.*;
 import java.net.ServerSocket;

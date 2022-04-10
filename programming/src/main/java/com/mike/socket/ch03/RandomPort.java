@@ -1,4 +1,4 @@
-package com.mike.socket;
+package com.mike.socket.ch03;
 
 import java.io.IOException;
 import java.net.ServerSocket;
