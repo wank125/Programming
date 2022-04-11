@@ -21,7 +21,6 @@ public class HttpClient {
             pw.println(msg);
             String echoMsg = (String) connection.getContent();
             System.out.printf(echoMsg);
-
             if (echoMsg.equals("echo:byte")) {
                 connection.disconnect();
             }
