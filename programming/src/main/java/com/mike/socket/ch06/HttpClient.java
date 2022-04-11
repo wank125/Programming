@@ -26,16 +26,5 @@ public class HttpClient {
                 connection.disconnect();
             }
         }
-
-//        URL url = new URL("https://www.baidu.com");
-//        InputStream in = url.openStream();
-//        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-//        byte[] buff = new byte[1024];
-//        int len = -1;
-//
-//        while ((len = in.read(buff)) != -1) {
-//            buffer.write(buff, 0, len);
-//        }
-//        System.out.print(new String(buffer.toByteArray()));
     }
 }
