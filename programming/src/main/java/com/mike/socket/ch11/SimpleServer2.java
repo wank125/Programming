@@ -15,7 +15,6 @@ public class SimpleServer2 {
             StockQuoteRegistryImpl registry = new StockQuoteRegistryImpl();
             InitialContext namingContext = new InitialContext();
             namingContext.rebind("rmi:StockQuoteRegistry", registry);
-
             new Thread(registry).start();
 
         } catch (Exception e) {
